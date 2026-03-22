@@ -1,0 +1,25 @@
+docker pull postgres:14
+docker pull btholt/complete-intro-to-sql
+
+docker run -e POSTGRES_PASSWORD=lol --name=pg --rm -d -p 5432:5432 postgres:14
+
+// e is environment variable
+// rm -> remove once concluded, don't keep logs
+// -d -> detached run in background
+// -p -> expose port
+
+// hash - e31264a4bc0d7975457b7aaca57d2ff8c38191997505b202d6416044dc15e127
+
+docker exec -u postgres -it pg psql
+-u -> run as postgres user
+-it -> interactive
+-psql -> client to run query against database
+
+
+// connect to postgrs volume
+docker-volume % docker run -d \
+  --name pg \
+  -e POSTGRES_PASSWORD=yoyo \
+  -p 5432:5432 \
+  -v bbdbe8f72d7f30c5737a4fd64e6182a8cb840ddac06e541f44257a25bd47420a:/var/lib/postgresql/data \
+  postgres:14

@@ -1,0 +1,48 @@
+\l -> list database
+\? -> help
+\! -> allow to run bash command
+\! pwd -> working directory
+\d -> show tables, sequences, constraints etc
+
+CREATE DATABASE recipeguru;
+
+// connect to database
+\c recipeguru 
+
+// create table
+CREATE TABLE ingredients (
+id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+title VARCHAR( 255 ) UNIQUE NOT NULL
+);
+// GENERATED ALWAYS AS IDENTITY - serial and auto-incrementing, previously serial command was used in postgres
+
+// insert
+INSERT INTO ingredients (title) VALUES ('bell pepper');
+
+// read
+SELECT * FROM ingredients;
+
+// drop table
+DROP TABLE ingredients;
+
+// drop database
+DROP DATABASE recipeguru;
+
+// Altering table
+ALTER TABLE ingredients ADD COLUMN image VARCHAR ( 255 );
+
+// show table schema
+\d ingredients
+
+// DROP COLUMN
+ALTER TABLE ingredients DROP COLUMN image;
+
+// ADD TYPE
+ALTER TABLE ingredients 
+ADD COLUMN type VARCHAR (50) NOT NULL;
+
+
+// Multiple commands
+ALTER TABLE ingredients 
+ADD COLUMN image VARCHAR (255),
+ADD COLUMN type VARCHAR (50) NOT NULL;

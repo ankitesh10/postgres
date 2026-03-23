@@ -1,0 +1,68 @@
+// select with defined fields
+SELECT title, type FROM ingredients;
+
+#Pagination
+
+// limit
+SELECT title, type FROM ingredients LIMIT 10;
+
+// offset
+SELECT title, type FROM ingredients LIMIT 10 OFFSET 10;
+
+// offset has issue when someitem deletes or gets added in between request like scroll
+
+
+SELECT id, title, type FROM ingredients WHERE id > 23 LIMIT 10;
+// this has better performance
+
+// WHERE
+SELECT title, type FROM ingredients WHERE type='fruit';
+
+// NOT
+SELECT title, type FROM ingredients WHERE type<>'fruit';
+
+// Combining where condition
+SELECT * FROM ingredients WHERE id >= 10 AND id < 20 LIMIT 10;
+
+// OR condition
+SELECT * FROM ingredients WHERE id <= 10 OR id > 20;
+
+// ORDER BY, in general sql is not require to give data by any order, it generally gives in order of insertion but you should not rely on it.
+SELECT * FROM ingredients ORDER BY id;
+SELECT * FROM ingredients ORDER BY id DESC;
+SELECT * FROM ingredients ORDER BY id ASC;
+SELECT * FROM ingredients ORDER BY title;
+
+
+# Like and functions
+
+// exact search
+SELECT * FROM ingredients WHERE title='pota';
+
+
+// shows somewhere in string 
+SELECT * FROM ingredients WHERE title LIKE '%pota%';
+
+// starts with 
+SELECT * FROM ingredients WHERE title LIKE '%pota';
+
+// ends with 
+SELECT * FROM ingredients WHERE title LIKE '%pota';
+
+// Lowercase
+SELECT * FROM ingredients WHERE LOWER(title) LIKE '%pota%';
+// or can use ILike
+SELECT * FROM ingredients WHERE title ILIKE '%pota%';
+
+// Concat, combining to column
+SELECT * FROM ingredients WHERE CONCAT(title, type) ILIKE '%rryfru%'; -- this is combining fruit+type
+
+// time function
+SELECT NOW();
+
+// can just lowercase as well
+SELECT LOWER('Hi There!');
+
+// Match one character
+SELECT * FROM ingredients WHERE title ILIKE 'ch_rry';
+

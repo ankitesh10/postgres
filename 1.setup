@@ -17,9 +17,9 @@ docker exec -u postgres -it pg psql
 
 
 // connect to postgrs volume
-docker-volume % docker run -d \
+docker run -d \
   --name pg \
-  -e POSTGRES_PASSWORD=yoyo \
+  -e POSTGRES_PASSWORD=lol \
   -p 5432:5432 \
   -v bbdbe8f72d7f30c5737a4fd64e6182a8cb840ddac06e541f44257a25bd47420a:/var/lib/postgresql/data \
   postgres:14

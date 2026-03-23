@@ -46,3 +46,13 @@ ADD COLUMN type VARCHAR (50) NOT NULL;
 ALTER TABLE ingredients 
 ADD COLUMN image VARCHAR (255),
 ADD COLUMN type VARCHAR (50) NOT NULL;
+
+
+
+ALTER TABLE ingredients DROP COLUMN image;
+
+
+// adding default value
+ALTER TABLE ingredients
+ADD COLUMN image VARCHAR ( 255 ),
+ADD COLUMN type VARCHAR ( 50 ) NOT NULL DEFAULT 'vegetable';

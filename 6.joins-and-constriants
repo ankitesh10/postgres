@@ -1,0 +1,68 @@
+CREATE TABLE recipes (
+    recipe_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    title VARCHAR (255) UNIQUE NOT NULL,
+    body TEXT
+);
+
+// TEXT has no bounds on number of characters, as recipe can be huge
+
+
+INSERT INTO recipes
+  (title, body)
+VALUES
+  ('cookies', 'very yummy'),
+  ('empanada','ugh so good'),
+  ('jollof rice', 'spectacular'),
+  ('shakshuka','absolutely wonderful'),
+  ('khachapuri', 'breakfast perfection'),
+  ('xiao long bao', 'god I want some dumplings right now');
+
+
+CREATE TABLE recipes_photos (
+  photo_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  recipe_id INTEGER,
+  url VARCHAR(255) NOT NULL
+);
+
+INSERT INTO recipes_photos
+  (recipe_id, url)
+VALUES
+  (1, 'cookies1.jpg'),
+  (1, 'cookies2.jpg'),
+  (1, 'cookies3.jpg'),
+  (1, 'cookies4.jpg'),
+  (1, 'cookies5.jpg'),
+  (2, 'empanada1.jpg'),
+  (2, 'empanada2.jpg'),
+  (3, 'jollof1.jpg'),
+  (4, 'shakshuka1.jpg'),
+  (4, 'shakshuka2.jpg'),
+  (4, 'shakshuka3.jpg'),
+  (5, 'khachapuri1.jpg'),
+  (5, 'khachapuri2.jpg');
+-- no pictures of xiao long bao
+
+
+// images of shakshuka
+SELECT * FROM recipes_photos WHERE recipe_id=4; -- Problem is code will not know the recipe id
+
+// INNER JOIN
+SELECT recipes.title, recipes.body, recipes_photos.url
+  FROM recipes_photos
+  INNER JOIN
+    recipes
+  ON
+    recipes_photos.recipe_id = recipes.recipe_id
+  WHERE recipes_photos.recipe_id = 4;
+
+
+// photo short name for row in recipes_photos
+// INNER JOIN - one to one matching, it gets common data
+
+// Full inner JOIN
+SELECT r.title, r.body, rp.url
+  FROM recipes_photos rp
+  INNER JOIN
+    recipes r
+  ON
+    rp.recipe_id = r.recipe_id;

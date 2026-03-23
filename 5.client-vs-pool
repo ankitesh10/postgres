@@ -1,0 +1,10 @@
+// client vs pool
+client creates one connection between server and database closes it when done.
+
+// pool 
+pool gives server the access from pool of client available, it close the client as well if needed. But it reuses existing conneciton.
+
+// when to use which
+for your web services you mainly want to use pool and for your script you want to use client
+
+

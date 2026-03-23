@@ -47,7 +47,7 @@ router.get("/search", async (req, res) => {
   const OFFSET = LIMIT * page;
 
   const result = await pool.query(
-    `SELECT * FROM ingredients WHERE title ILIKE $1 LIMIT $2 OFFSET $3`,
+    `SELECT *, COUNT(*) OVER ()::INT AS total_count FROM ingredients WHERE title ILIKE $1 LIMIT $2 OFFSET $3`,
     [`%${term}%`, LIMIT, OFFSET]
   );
 

@@ -1,0 +1,16 @@
+# Natural JOIN
+SELECT * FROM recipes_photos NATURAL JOIN recipes;
+
+// how this works is it looks for columns with same name on both tables and it joins on them, in my db recipe_id is common for both so it joins on them.
+// it is very amiguos but don't use it
+
+
+# Cross JOIN
+SELECT r.title, r.body, rp.url 
+FROM recipes r
+CROSS JOIN
+recipes_photos rp;
+// this will make every combination joined together in very combination
+// CROSS JOIN can be useful in data creation when testing/initializing. 
+// Rather than handcrafting some test data, you can cross join together dates, locations, and items with where id in () to narrow down the list making generating a series of time-based data points easier.
+

@@ -1,0 +1,85 @@
+So far so good, we have the ability to query across tables and join them together. We have a problem though: what if we delete a recipe?
+
+DELETE
+FROM
+  recipes r
+WHERE
+  r.recipe_id = 5;
+-- The khachapuri
+Cool, we dropped the recipe, but what about the photos?
+
+SELECT
+  *
+FROM
+  recipes_photos rp
+WHERE
+  rp.recipe_id = 5;
+Oh no! Still there! Now, we could write a second query to drop these two, but it'd be great if Postgres could track these changes for us and assure us they'd never fall out of sync.
+
+Let's start with a fresh slate really quick.
+
+
+
+DROP TABLE IF EXISTS recipes;
+DROP TABLE IF EXISTS recipes_photos;
+
+CREATE TABLE recipes (
+  recipe_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  title VARCHAR ( 255 ) UNIQUE NOT NULL,
+  body TEXT
+);
+INSERT INTO recipes
+  (title, body)
+VALUES
+  ('cookies', 'very yummy'),
+  ('empanada','ugh so good'),
+  ('jollof rice', 'spectacular'),
+  ('shakshuka','absolutely wonderful'),
+  ('khachapuri', 'breakfast perfection'),
+  ('xiao long bao', 'god I want some dumplings right now');
+
+// CREATE TABLE with foriegn KEY
+CREATE TABLE recipes_photo (
+ photo_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+ url VARCHAR(255) NOT NULL,
+ recipe_id INT REFERENCES recipes(recipe_id) ON DELETE CASCADE
+);
+
+// CASCADE delete it from connected table as well
+// options - ON DELETE RESTRICT, ON DELETE NO ACTION (default), ON DELETE SET NULL, ON DELETE SET DEFAULT
+
+// foriegn key will not allow to insert anything in recipes_photo table with incorrect reciepe_id
+INSERT INTO recipes_photo (recipe_id, url) VALUES (1000, 'yellow');
+// this will throw this error - 
+// ERROR:  insert or update on table "recipes_photo" violates foreign key constraint "recipes_photo_recipe_id_fkey"
+// DETAIL:  Key (recipe_id)=(1000) is not present in table "recipes".
+
+
+# Many to Many relationship
+
+CREATE TABLE recipe_ingredients (
+recipe_id INTEGER REFERENCES recipes(recipe_id) ON DELETE NO ACTION,
+ingredient_id INTEGER REFERENCES ingredients(id) ON DELETE NO ACTION,
+CONSTRAINT reciepe_ingredients_pk PRIMARY KEY (recipe_id, ingredient_id) -- creates primary key with combination of reciepe_id and ingredient_id
+);
+
+
+// select
+SELECT 
+  r.title AS reciepe_title,
+  r.body AS reciepe_body,
+  i.title AS ingredient_name,
+  i.image AS ingredient_image,
+  i.type AS ingredient_type,
+  i.id AS iid,
+  r.recipe_id AS rid
+FROM 
+  recipe_ingredients ri
+INNER JOIN
+  recipes r
+ON 
+  r.recipe_id = ri.recipe_id
+INNER JOIN
+  ingredients i
+ON
+  i.id = ri.ingredient_id;

@@ -39,6 +39,9 @@ VALUES
   (5, 'khachapuri2.jpg');
 
 
+// note drop the attached recipes.sql file commands into the db
+
+
 
 // select first inamge for all reciepe photos
 SELECT DISTINCT ON (r.recipe_id)

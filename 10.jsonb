@@ -1,0 +1,51 @@
+ALTER TABLE recipes
+ADD COLUMN meta JSONB;
+
+UPDATE
+ recipes
+SET
+ meta='{"tags": ["choclate", "dessert", "cake"]}'
+WHERE
+ recipe_id=16;
+
+ UPDATE
+  recipes
+SET
+  meta='{ "tags": ["dessert", "cake"] }'
+WHERE
+  recipe_id=20;
+
+UPDATE
+  recipes
+SET
+  meta='{ "tags": ["dessert", "fruit"] }'
+WHERE
+  recipe_id=45;
+
+UPDATE
+  recipes
+SET
+  meta='{ "tags": ["dessert", "fruit"] }'
+WHERE
+  recipe_id=47;
+
+
+// select all tags from recipe that has meta data
+SELECT meta -> 'tags' FROM recipes WHERE meta IS NOT NULL;
+
+// -> this is accessor
+
+// select first of each tags
+SELECT meta -> 'tags' -> 0 FROM recipes WHERE meta IS NOT NULL;  -- this will return json
+
+// just want text
+SELECT meta -> 'tags' ->> 0 FROM recipes WHERE meta IS NOT NULL;
+
+
+Alright, let's select all the cakes.
+
+SELECT recipe_id, title, meta -> 'tags' FROM recipes WHERE meta -> 'tags' ? 'cake';
+SELECT recipe_id, title, meta -> 'tags' FROM recipes WHERE meta -> 'tags' @> '"cake"';
+
+Both of these work. The first one with the ? checks to see if 'cake' is a top level key available in which case it is.
+The second with the @> is doing a "does this array contains this value. That's why we do need the extra double quotes, since it is a string in a JSON value.

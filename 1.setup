@@ -1,3 +1,5 @@
+// https://sql.holt.courses/
+
 docker pull postgres:14
 docker pull btholt/complete-intro-to-sql
 
@@ -9,6 +11,8 @@ docker run -e POSTGRES_PASSWORD=lol --name=pg --rm -d -p 5432:5432 postgres:14
 // -p -> expose port
 
 // hash - e31264a4bc0d7975457b7aaca57d2ff8c38191997505b202d6416044dc15e127
+
+// ctrl + l -> to clear psql terminal
 
 docker exec -u postgres -it pg psql
 -u -> run as postgres user

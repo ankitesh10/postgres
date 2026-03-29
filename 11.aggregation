@@ -1,0 +1,67 @@
+SELECT COUNT(*) FROM ingredients;
+
+// count DISTINCT
+SELECT COUNT(DISTINCT type) FROM ingredients;
+
+// Select distinct type
+SELECT DISTINCT type FROM ingredients;
+
+// get count of each type
+SELECT
+type, COUNT(type)
+FROM
+ingredients
+GROUP BY
+type;
+
+
+# Having
+
+
+// The following query intentionally doesn't work
+
+SELECT
+  type, COUNT(type)
+FROM
+  ingredients
+WHERE
+  COUNT(count) <= 10
+GROUP BY
+  type;
+
+// You'll get the error that count doesn't exist and it's because count isn't something you're selecting for, 
+// it's something you're aggregating. The where clause filters on the rows you're selecting which happens before the aggregation. 
+// This can be useful because let's say we wanted to select only things that have an id higher than 30.
+
+SELECT
+  type, COUNT(type)
+FROM
+  ingredients
+WHERE
+  id > 30
+GROUP BY
+  type;
+
+
+// Okay, so how we do filter based on the aggregates and not on the rows themselves? With HAVING.
+
+SELECT
+  type, COUNT(type)
+FROM
+  ingredients
+GROUP BY
+  type
+HAVING
+  COUNT(type) < 10;
+And keep in mind you can use both together
+
+SELECT
+  type, COUNT(type)
+FROM
+  ingredients
+WHERE
+  id > 30
+GROUP BY
+  type
+HAVING
+  COUNT(type) < 10;

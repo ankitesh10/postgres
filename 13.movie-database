@@ -13,6 +13,19 @@ FROM
 ORDER BY 
  revenue DESC LIMIT 1; 
 
+// OR
+
+SELECT 
+  m.name,
+  m.revenue
+FROM 
+  movies m
+ORDER BY 
+  m.revenue DESC NULLS LAST
+LIMIT 1;
+
+// Answer - 2,797,501,328
+
 
 #How much revenue did the movies Keanu Reeves act in make?
 
@@ -30,3 +43,25 @@ WHERE
 p.name = 'Keanu Reeves'
 GROUP BY
 p.name;
+
+
+// answer - 5,065,803,558
+
+
+# Which 5 people were in the movies that had the most revenue?
+
+SELECT p.name, SUM(m.revenue) AS total
+FROM people p
+INNER JOIN
+ casts c
+ON
+ c.person_id = p.id
+INNER JOIN
+ movies m 
+ON
+m.id = c.movie_id
+GROUP BY
+ p.name
+ORDER BY 
+ total DESC NULLS LAST
+LIMIT 10;

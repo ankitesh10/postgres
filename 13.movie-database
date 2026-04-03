@@ -61,7 +61,7 @@ INNER JOIN
 ON
 m.id = c.movie_id
 GROUP BY
- p.name
+ p.id, p.name
 ORDER BY 
  total DESC NULLS LAST
 LIMIT 10;

@@ -84,3 +84,22 @@ GROUP BY
 ORDER BY
  total_categories DESC
 LIMIT 10;
+
+
+# Which category is associated with the most movies
+
+SELECT c.name, COUNT(c.id) AS total_movies_count
+FROM movie_keywords mk
+INNER JOIN
+ movies m
+ON
+ m.id = mk.movie_id
+INNER JOIN
+ categories c
+ON
+ c.id = mk.category_id
+GROUP BY
+ c.id
+ORDER BY
+ total_movies_count DESC
+LIMIT 10;;

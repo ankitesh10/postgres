@@ -65,3 +65,22 @@ GROUP BY
 ORDER BY 
  total DESC NULLS LAST
 LIMIT 10;
+
+
+# Which 10 movies have the most keywords?
+
+SELECT m.name, COUNT(m.id) AS total_categories FROM 
+ movie_keywords mk
+INNER JOIN
+ categories c
+ON 
+ c.id = mk.category_id
+INNER JOIN
+ movies m
+ON
+ m.id = mk.movie_id
+GROUP BY
+ m.id
+ORDER BY
+ total_categories DESC
+LIMIT 10;

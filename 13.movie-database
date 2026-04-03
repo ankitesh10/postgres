@@ -102,4 +102,4 @@ GROUP BY
  c.id
 ORDER BY
  total_movies_count DESC
-LIMIT 10;;
+LIMIT 10;

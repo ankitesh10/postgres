@@ -1,0 +1,84 @@
+// run existing container
+docker exec -u postgres -it  sql-apps-db-1 psql omdb
+
+EXPLAIN SELECT * FROM movies WHERE name='Tron Legacy';
+
+EXPLAIN SELECT * FROM movies WHERE id=21103;
+
+// first query will be Index scan compare to seq scan in second one
+// also in second query it will keep on scanning after a match as well,
+// as db don't know there is only 1 movie with the name Tron Legacy
+
+
+# If want detailed output use ANALYSE
+EXPLAIN ANALYSE  SELECT * FROM movies WHERE id=21103;
+
+
+# Unique indexes
+CREATE TABLE american_addresses (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    street_address int NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    state VARCHAR(255) NOT NULL,
+    UNIQUE (street_address, city, state)
+);
+
+// can't create index on street_address, city and state independently. Unique will create index its combination
+
+
+// Create Index
+EXPLAIN ANALYZE SELECT * FROM movies WHERE name='Tron Legacy';
+
+CREATE INDEX idx_name ON movies(name);
+
+
+// delete index
+DROP INDEX idx_name;
+
+
+# gin index - generalized inverted index
+
+It's really useful for things where multiple values could apply to one row. 
+A good example of this would be with JSONB columns: you have one column 
+but it could have multiple values inside the object that a search could find.
+
+
+EXPLAIN ANALYZE SELECT * FROM movie_reviews WHERE scores ? 'rolling_stone';
+EXPLAIN ANALYZE SELECT *  FROM movie_reviews WHERE scores @> '{"nytimes": 98}';
+
+
+// gin index on name search
+SELECT name FROM movies WHERE name ILIKE '%star wars%';
+
+// trigram - 3 words all combination of a work
+SELECT SHOW_TRGM('star wars');
+
+CREATE INDEX ON movies USING gin(name gin_trgm_ops);
+
+
+# Partial Index
+SELECT * FROM category_names WHERE language = 'en' LIMIT 5;
+SELECT COUNT(*) FROM category_names;
+SELECT DISTINCT language, COUNT(*) FROM category_names GROUP BY language;
+
+EXPLAIN ANALYZE SELECT * FROM category_names WHERE language='en' AND name ILIKE '%animation%' LIMIT 5;
+EXPLAIN ANALYZE SELECT * FROM category_names WHERE language='de' AND name ILIKE '%animation%' LIMIT 5;
+
+
+// create index on where clause
+CREATE INDEX idx_en_category_names ON category_names(language) WHERE language = 'en';
+
+// can create index on all languages
+CREATE INDEX idx_en_category_names ON category_names(language);
+
+
+#index on derivative values
+EXPLAIN ANALYZE SELECT
+  name, date, revenue, budget, COALESCE((revenue - budget), 0) AS profit
+FROM
+  movies
+ORDER BY
+  profit DESC
+LIMIT 10;
+
+CREATE INDEX idx_movies_profit ON movies (COALESCE((revenue - budget), 0));

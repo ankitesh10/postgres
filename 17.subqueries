@@ -1,0 +1,74 @@
+// Some times you need two queries to do one thing. 
+// Some times you can rethink queries to accomplish the same thing but other times it's easier to just have two queries.
+
+SELECT
+  p.name
+FROM
+  casts c
+
+INNER JOIN
+  people p
+ON
+  c.person_id = p.id
+
+WHERE
+  c.movie_id = (
+    SELECT
+      id
+    FROM
+      movies
+    WHERE
+      name = 'Tron Legacy'
+  );
+
+
+// Using join
+
+SELECT
+  p.name
+FROM
+  casts c
+
+INNER JOIN
+  people p
+ON
+  c.person_id = p.id
+
+INNER JOIN
+  movies m
+ON
+  c.movie_id = m.id
+AND
+  m.name='Tron Legacy';  
+
+
+// So which one is "better"? That's really up to you. The cost of the subquery one is cost=156.73..308.04 and the cost of the inner join one is cost=148.86..175.03  
+
+// 99% of the time I'd say joins will be faster but frequently it doesn't much matter.
+
+// When it's close enough, choose which one you can maintain better (generally speaking, optimize queries that are slow and run frequently.)
+
+
+// Multiple values returned form subquery
+
+SELECT
+  m.name,
+  ARRAY(
+    SELECT
+      ecn.name
+    FROM
+      english_category_names ecn
+    INNER JOIN
+      movie_keywords mk
+    ON
+      mk.category_id = ecn.category_id
+    WHERE
+      m.id = mk.movie_id
+    LIMIT 5
+  ) AS keywords
+FROM
+  movies m
+WHERE
+  name ILIKE '%star wars%';
+
+Array is a datatype in PostgreSQL. Here we're using that to aggregate our answers into one response.

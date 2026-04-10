@@ -1,0 +1,95 @@
+# create view
+
+CREATE VIEW
+  english_category_names
+AS
+SELECT
+  category_id, name, language
+FROM
+  category_names
+WHERE
+  language='en';
+
+
+// Now you can do:
+
+SELECT * FROM english_category_names LIMIT 5;
+
+// A few things to note here:
+
+- We're querying this view as if it was a normal table. That's the power of views. 
+  You get to treat them as normal tables in your querying.
+
+- Imagine you have a contractor working on your app with you but you don't want to give them access 
+  to everything in a table that they need to work on. You can make a view and give them only access 
+  to that one view. One of the powerful aspects of views.
+
+ -Views can utilized underlying indexes. You can't index a view itself but the data itself can be indexed.
+
+
+# Insert into views
+
+INSERT INTO english_category_names (category_id, name, language) VALUES (2, 'Brian Holt biopic', 'it');
+
+// note - this will insert in category_names names but will not be able to it in english_category_names views as views are just lens
+// for the table i.e it runs the query and does not create new tabl. 
+
+// Some pretty cool we can do here with this view (but not all views) is we can actually insert into the view itself. 
+// Because it's simple enough that if we insert a category_id and name with the language it'll be smart enough to forward 
+// that on to the correct table.
+
+
+# View with Joins
+
+
+// create view
+CREATE VIEW
+  actors_roles_movies
+AS
+SELECT
+  p.name AS person_name, c.role, m.name AS movie_name, p.id AS person_id, m.id AS movie_id
+FROM
+  people p
+
+INNER JOIN
+  casts c
+ON
+  p.id = c.person_id
+
+INNER JOIN
+  movies m
+ON
+  c.movie_id = m.id
+
+WHERE
+  c.role <> '';
+
+
+SELECT * FROM actors_roles_movies LIMIT 20;
+
+
+// join on view
+SELECT
+  arm.person_name, ecn.name AS keyword, COUNT(*) as count
+FROM
+  actors_roles_movies arm
+
+INNER JOIN
+  movie_keywords mk
+ON
+  mk.movie_id = arm.movie_id
+
+INNER JOIN
+  english_category_names ecn
+ON
+  ecn.category_id = mk.category_id
+
+-- WHERE arm.person_name = 'Julia Roberts'
+
+GROUP BY
+  arm.person_name, ecn.name
+
+ORDER BY
+  count DESC
+
+LIMIT 20;

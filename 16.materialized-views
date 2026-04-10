@@ -1,0 +1,51 @@
+// Materialized view is similar to a view but it's not live data. 
+// Instead you take a snapshot of what the query is now and then you query that data which is way cheaper. 
+// At that point it's just a normal table. You can even index it!
+
+CREATE MATERIALIZED VIEW
+  actor_categories
+
+AS
+
+SELECT
+  arm.person_name, ecn.name AS keyword, COUNT(*) as count
+FROM
+  actors_roles_movies arm
+
+INNER JOIN
+  movie_keywords mk
+ON
+  mk.movie_id = arm.movie_id
+
+INNER JOIN
+  english_category_names ecn
+ON
+  ecn.category_id = mk.category_id
+
+GROUP BY
+  arm.person_name, ecn.name
+
+WITH NO DATA;
+
+
+- We created the materialized view and provided it the query to get the data to populate itself.
+- We specified to not yet populate it. Imagine if you were doing this on your production server. 
+- You want to be very judicious when you run this expensive query.  
+- If you leave out the NO part and say WITH DATA it'll run this query first time.
+
+
+REFRESH MATERIALIZED VIEW actor_categories; - this goes faster but it locks the table so queries in the mean time won't work.
+REFRESH MATERIALIZED VIEW CONCURRENTLY actor_categories; - this works far slower but doesn't lock the table in the process. Useful if you can't afford downtime on the view.
+
+
+// create index
+CREATE INDEX idx_actor_categories_count ON actor_categories(count DESC NULLS LAST);
+
+- Note the NULLS LAST is necessary or else NULLS FIRST is implicit and it won't use our index.
+
+EXPLAIN ANALYZE SELECT * FROM actor_categories ORDER BY count DESC NULLS LAST LIMIT 10;
+
+
+// create index to mke concurrently work
+CREATE UNIQUE INDEX CONCURRENTLY actor_categories_person_keyword_idx
+ON actor_categories (person_name, keyword);
